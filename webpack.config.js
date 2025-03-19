@@ -2,6 +2,7 @@ var webpack = require("webpack");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 var path = require("path");
 const GlobEntries = require("webpack-glob-entries");
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = {
   mode: "production",
@@ -23,22 +24,27 @@ module.exports = {
   stats: {
     colors: true,
   },
-  plugins: [new CleanWebpackPlugin(), new webpack.ProvidePlugin({
-    process: "process/browser",
+  plugins: [new CleanWebpackPlugin(), new NodePolyfillPlugin({
+    additionalAliases: ['process', 'buffer'],
+  }), 
+    new webpack.ProvidePlugin({
+   // process: "process/browser",
     Buffer: ["buffer", "Buffer"],
-  })],
+   }
+ )
+],
   externals: /^(k6|https?\:\/\/)(\/.*)?/,
   resolve: {
     fallback: {
       "net": false,  // Mailosaur is not designed to run in the browser, so disabling these.
       "tls": false,
-      "https": require.resolve("https-browserify"),
-      "http": require.resolve("stream-http"),
-      "url": require.resolve("url/"),
-      "assert": require.resolve("assert/"),
-      "crypto": require.resolve("crypto-browserify"),
-      "buffer": require.resolve("buffer/"),
-      "process": require.resolve("process/")
+      // "https": require.resolve("https-browserify"),
+      // "http": require.resolve("stream-http"),
+      // "url": require.resolve("url/"),
+      // "assert": require.resolve("assert/"),
+      // "crypto": require.resolve("crypto-browserify"),
+      // "buffer": require.resolve("buffer/"),
+      // "process": require.resolve("process/")
     }
   },
 };

@@ -1,5 +1,5 @@
 import { browser } from 'k6/browser';
-import { MailosaurClient } from 'mailosaur'
+const MailosaurClient = require('mailosaur')
 
 export const options = {
   scenarios: {
@@ -24,6 +24,17 @@ export default async function () {
     await page.goto('https://test.k6.io/');
     await page.screenshot({ path: 'screenshots/screenshot.png' });
     const mailosaurClient = new MailosaurClient('abcd');
+    const mailosaur = new MailosaurClient('API_KEY');
+    const serverId = 'abc123'
+    const serverDomain = 'abc123.mailosaur.net'
+  
+    const searchCriteria = {
+      sentTo: 'anything@' + serverDomain
+    }
+    
+    const message = await mailosaur.messages.get(serverId, searchCriteria)
+  
+    console.log(message.subject)
   } finally {
     await page.close();
   }
